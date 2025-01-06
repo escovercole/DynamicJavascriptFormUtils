@@ -11,7 +11,7 @@
 
 //Adds a character remaining field to the text field based on the data-val-length-max property
 //  textareaId: ID of the textarea to be counted
-export default function SetUpCharCounter(textareaId) {
+export function SetUpCharCounter(textareaId) {
     const textcountId = textareaId + 'Text';
     const wordcountId = textareaId + 'Words'
     const textarea = document.querySelector("#" + textareaId);
