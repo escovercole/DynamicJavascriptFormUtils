@@ -7,14 +7,17 @@
 </head>
 <body>
     <form>
+        <label for="CountedProperty">Expanding textarea</label>
         <textarea id="CountedProperty" data-val-length-max="100"></textarea>
-        <textarea class="ExpandingTextArea"></textarea>
+
+        <label for="ExpandingArea1">Expanding textArea</label>
+        <textarea id="ExpandingArea1" class="ExpandingTextArea"></textarea>
         <div>
             <input type="radio" id="YesRadio" name="option" value="yes">
             <label for="YesRadio">Yes</label>
             <input type="radio" id="NoRadio" name="option" value="no">
             <label for="NoRadio">No</label>
-            <div id="ConditionalDiv" style="display: none;">Conditionally Visible</div>
+            <div id="ConditionalDiv">Conditionally Visible</div>
         </div>
     </form>
 
