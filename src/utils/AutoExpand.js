@@ -15,7 +15,7 @@ function expandElementHeight(element) {
     element.style.height = element.scrollHeight + "px";
 }
 
-export default function SetUpAutoExpand(className) {
+export function SetUpAutoExpand(className) {
     const textareas = document.querySelectorAll('.' + className);
 
     textareas.forEach(function (textarea) {
