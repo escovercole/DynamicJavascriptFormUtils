@@ -46,15 +46,24 @@ function formatWithCommas(num) {
  *  limit - Maximum number of digits allowed before the decimal.
  */
 function handleCommaFormatting(input, limit) {
+    const cursorPosition = input.selectionStart; // Get the cursor position
+    const oldValue = input.value;
     const value = input.value.trim();
-    let sanitizedValue = value.replace(/[^\d.]/g, '');
 
+    let sanitizedValue = value.replace(/[^\d.]/g, '');
     const [integer, decimal] = sanitizedValue.split('.');
+
     if (integer.length > limit) {
         sanitizedValue = integer.slice(0, limit) + (decimal ? '.' + decimal : '');
     }
 
-    input.value = sanitizedValue ? formatWithCommas(sanitizedValue) : '';
+    const formattedValue = sanitizedValue ? formatWithCommas(sanitizedValue) : '';
+    input.value = formattedValue;
+
+    const diff = formattedValue.length - oldValue.length;
+    const newCursorPosition = Math.max(0, cursorPosition + diff);
+
+    input.setSelectionRange(newCursorPosition, newCursorPosition);
 }
 
 /** Set up comma formatting for input fields.
@@ -78,14 +87,22 @@ export function SetUpCommaFormatting(className, limit = 9) {
  *  limit - Maximum number of digits allowed (default is 9).
  */
 function handleIntegerFormatting(input, applyCommas, limit) {
+    const cursorPosition = input.selectionStart;
+    const oldValue = input.value;
     const value = input.value.trim();
-    let sanitizedValue = value.replace(/[^\d]/g, '');
 
+    let sanitizedValue = value.replace(/[^\d]/g, '');
     if (sanitizedValue.length > limit) {
         sanitizedValue = sanitizedValue.slice(0, limit);
     }
 
-    input.value = applyCommas ? formatWithCommas(sanitizedValue) : sanitizedValue;
+    const formattedValue = applyCommas ? formatWithCommas(sanitizedValue) : sanitizedValue;
+    input.value = formattedValue;
+
+    const diff = formattedValue.length - oldValue.length;
+    const newCursorPosition = Math.max(0, cursorPosition + diff);
+
+    input.setSelectionRange(newCursorPosition, newCursorPosition);
 }
 
 /** Set up integer formatting for input fields.
