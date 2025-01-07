@@ -29,6 +29,7 @@ export function SetUpAutoExpand(className = "ExpandingTextArea") {
             textarea.addEventListener("input", function () {
                 expandElementHeight(this);
             });
+            textarea.setAttribute("style", "overflow-y:hidden;");
             expandElementHeight(textarea); 
         }
     });
