@@ -97,9 +97,11 @@ export function SetUpSingleSelectCheck(className) {
             });
         }
     }
-    // Call the toggleCheck function to set the initial state
-    toggleCheck();
     checkboxes.forEach(checkbox => {
+        // Set the initial state if required
+        if (checkbox.checked) {
+            toggleCheck.call(checkbox);
+        }
         checkbox.addEventListener("change", toggleCheck);
     });
 }
