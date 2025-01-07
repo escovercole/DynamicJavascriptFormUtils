@@ -1,135 +1,92 @@
-﻿/*
-    CurrencyFormatting:
-        Auto formats and limits input as comma separated decimal values: 9,999,999.99
+/*
+    Currency and Integer Formatting:
+    - Automatically formats input fields with comma-separated values.
 
-    IntegerFormatting:
-        Auto formats and limits input as integer values (default comma separated): 999,999
-                                                        (applyCommas arg = false): 999999
+    Functions:
+    - RemoveCommas: Strips commas from input values.
+    - SetUpCommaFormatting: Formats input fields as comma-separated decimal numbers.
+    - SetUpIntegerFormatting: Formats input fields as integers, optionally with commas.
 
     ----------------------
-        Initialization
+        Usage Examples
     ----------------------
-    On page load, call set up with class names assigned to input fields
-        SetUpCommaFormatting('CurrencyNumber')
-        SetUpIntegerFormatting('IntegerNumber')
-        SetUpIntegerFormatting('SmallerNumber', false)
-
+    - SetUpCommaFormatting('CurrencyNumber');
+    - SetUpIntegerFormatting('IntegerNumber');
+    - SetUpIntegerFormatting('SmallerNumber', false);
 */
 
-
-
-
-// Function to remove commas from input fields
-function RemoveCommas(classGroup) {
-    var listOfElements = document.getElementsByClassName(classGroup);
-    for (var i = 0; i < listOfElements.length; i++) {
-        listOfElements[i].value = listOfElements[i].value.replace(/,/g, '');
-    }
-}
-
-// Function to format commas
-function FormatCommas(ref) {
-    var $input = $(ref);
-    var inputValue = $input.val().trim();
-    var num = inputValue.replace(/[^\d.]+/g, ''); // Preserve decimal point
-
-    if (num === "") {
-        $input.val(num);
-    } else {
-        $input.val(MakeCommaNumber(num));
-    }
-}
-
-// Format number with commas. Max length of 9 digits before decimal
-function MakeCommaNumber(num) {
-    // Remove any non-digit characters except for decimal points
-    num = num.replace(/[^\d.]/g, '');
-
-    // Split the number into integer and decimal parts
-    var parts = num.split('.');
-
-    // If there's no integer part, default to '0'
-    if (parts[0].length === 0) {
-        parts[0] = '0';
-    }
-
-    // Format the integer part with commas
-    parts[0] = parseInt(parts[0].replace(/\D/g, ""), 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // Ensure there are at most two decimal places
-    if (parts.length > 1) {
-        parts[1] = parts[1] ? parts[1].slice(0, 2) : '';
-    }
-
-    // Concatenate integer and decimal parts back together
-    var result = parts.join('.');
-
-    // Ensure the number does not exceed 11 digits before the decimal point
-    if (result.split('.')[0].length > 11) {
-        // Truncate the integer part if it exceeds the limit
-        result = result.substring(result.length - 11);
-    }
-
-    // Ensure there's only one decimal point
-    var decimalCount = result.split('.').length - 1;
-    if (decimalCount > 1) {
-        // Remove all but the first decimal point
-        result = result.replace(/\./g, function (match, idx) {
-            return idx === result.indexOf('.') ? '.' : '';
-        });
-    }
-
-    return result;
-}
-
-// Attach event listener to input fields with a specific class
-export function SetUpCommaFormatting(className) {
-    $('.' + className).each(function () {
-        // Check if input event listener is already attached
-        if (!$(this).data('inputEventListenerAttached')) {
-            // Attach input event listener
-            $(this).on('input', function () {
-                FormatCommas(this);
-            });
-            // Set a flag indicating that the event listener is attached
-            $(this).data('inputEventListenerAttached', true);
-        }
-
-        // Call comma formatting function initially
-        FormatCommas(this);
+/** Remove commas from input values in fields with a specified class.
+ *  classGroup - Class name of input fields.
+ */
+export function RemoveCommas(classGroup) {
+    document.querySelectorAll(`.${classGroup}`).forEach(input => {
+        input.value = input.value.replace(/,/g, '');
     });
 }
 
+/** Format a number string with commas (and optional decimal places).
+ *  num - Input number as a string.
+ */
+function formatWithCommas(num) {
+    num = num.replace(/[^\d.]/g, '');
 
+    const [integer, decimal] = num.split('.');
 
-//Allow only integer input. Max length of 9
-function FormatInteger(ref, applyCommas) {
-    var $input = $(ref);
-    var inputValue = $input.val().trim();
-    var num = inputValue.replace(/[^\d]+/g, ''); 
+    const formattedInteger = parseInt(integer || '0', 10)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    if (num.length > 9) {
-        // Truncate the integer part if it exceeds the limit
-        num = num.substring(num.length - 9);
-    }
-    if (num.length > 0 && applyCommas) {
-        num = MakeCommaNumber(num);
-    }
+    const formattedDecimal = decimal ? decimal.slice(0, 2) : '';
 
-    $input.val(num);
+    return formattedDecimal ? `${formattedInteger}.${formattedDecimal}` : formattedInteger;
 }
-export function SetUpIntegerFormatting(className, applyCommas = true) {
-    $('.' + className).each(function () {
-        // Check if input event listener is already attached
-        if (!$(this).data('inputEventListenerAttached')) {
-            // Attach input event listener
-            $(this).on('input', function () {
-                FormatInteger(this, applyCommas);
-            });
-            // Set a flag indicating that the event listener is attached
-            $(this).data('inputEventListenerAttached', true);
+
+/** Format input as a comma-separated number.
+ *  input - Input field element.
+ */
+function handleCommaFormatting(input) {
+    const value = input.value.trim();
+    input.value = value ? formatWithCommas(value) : '';
+}
+
+/** Set up comma formatting for input fields.
+ *  className - Class name of the input fields to format.
+ */
+export function SetUpCommaFormatting(className) {
+    document.querySelectorAll(`.${className}`).forEach(input => {
+        if (!input.dataset.inputEventListenerAttached) {
+            input.addEventListener('input', () => handleCommaFormatting(input));
+            input.dataset.inputEventListenerAttached = 'true';
         }
 
-        FormatInteger(this, applyCommas);
+        handleCommaFormatting(input);
+    });
+}
+
+/** Format an integer with optional commas.
+ *  input - Input field element.
+ *  applyCommas - Whether to format with commas.
+ */
+function handleIntegerFormatting(input, applyCommas) {
+    const value = input.value.trim();
+    let sanitizedValue = value.replace(/[^\d]/g, ''); // Remove non-digit characters.
+
+    sanitizedValue = sanitizedValue.slice(0, 9);
+
+    input.value = applyCommas ? formatWithCommas(sanitizedValue) : sanitizedValue;
+}
+
+/** Set up integer formatting for input fields.
+ *  className - Class name of the input fields to format.
+ *  applyCommas - Whether to apply commas to the formatted integers.
+ */
+export function SetUpIntegerFormatting(className, applyCommas = true) {
+    document.querySelectorAll(`.${className}`).forEach(input => {
+        if (!input.dataset.inputEventListenerAttached) {
+            input.addEventListener('input', () => handleIntegerFormatting(input, applyCommas));
+            input.dataset.inputEventListenerAttached = 'true';
+        }
+
+        handleIntegerFormatting(input, applyCommas);
     });
 }
