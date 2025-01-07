@@ -1,34 +1,43 @@
-﻿
 /*
-    Auto formats input elements as phone numbers in format: (555) 555-5555
+  Phone Number Formatting:
+   Automatically formats input fields as phone numbers in the format: (555) 555-5555.
+   
+   ----------------------
+        Usage Examples
+   ----------------------
+    - SetUpPhoneFormatting('PhoneNumber');
+ 
+ */
 
-    ----------------------
-        Initialization
-    ----------------------
-    On page load, call set up with class names assigned to input fields
-        SetUpPhoneFormatting('PhoneNumber');
+/**
+ * Formats a phone number into the (555) 555-5555 format.
+ *  textBox - The input field to format.
+ */
+function formatPhone(textBox) {
+    let input = textBox.value.replace(/\D/g, '');
+    
+    if (input.length > 10) input = input.slice(0, 10);
 
-*/
+    const parts = [];
+    if (input.length > 0) parts.push('(' + input.slice(0, 3));
+    if (input.length > 3) parts.push(') ' + input.slice(3, 6));
+    if (input.length > 6) parts.push('-' + input.slice(6));
 
-//Format phone number
-function FormatPhone(textBox) {
-    var input = textBox.value;
-    input = input.replace(/\D/g, '');
-    var size = input.length;
-    if (size > 0) { input = "(" + input }
-    if (size > 3) { input = input.slice(0, 4) + ") " + input.slice(4, 11) }
-    if (size > 6) { input = input.slice(0, 9) + "-" + input.slice(9) }
-    textBox.value = input;
+    textBox.value = parts.join('');
 }
 
-// Attach event listener to input fields with a specific class
+/**
+ * Sets up phone number formatting for input fields with the specified class.
+ *  className - The class name of the input fields to format.
+ */
 export function SetUpPhoneFormatting(className) {
-    $('.' + className).each(function () {
-        // Attach input event listener
-        $(this).on('input', function () {
-            FormatPhone(this);
-        });
-        // Format to initial state
-        FormatPhone(this);
+    const inputs = document.querySelectorAll(`.${className}`);
+    
+    inputs.forEach(input => {
+        if (!input.dataset.phoneFormattingAttached) {
+            input.addEventListener('input', () => formatPhone(input));
+            input.dataset.phoneFormattingAttached = 'true';
+        }
+        formatPhone(input);
     });
 }
