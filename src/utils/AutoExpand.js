@@ -10,37 +10,43 @@
 */
 
 
-function expandElementHeight(element) {
-    element.style.height = "auto";
-    element.style.height = element.scrollHeight + "px";
-}
-
 let registeredTextareas = [];
+let resizeTimeout;
 
 export function SetUpAutoExpand(className) {
     const textareas = document.querySelectorAll('.' + className);
-    registeredTextareas = [...textareas]; // Store references
+    registeredTextareas = [...textareas]; 
 
     textareas.forEach(function (textarea) {
         if (textarea.tagName.toLowerCase() === "textarea") {
             textarea.addEventListener("input", function () {
                 expandElementHeight(this);
             });
-            expandElementHeight(textarea);
+            expandElementHeight(textarea); 
         }
     });
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResizeDebounced);
 }
 
-function handleResize() {
-    registeredTextareas.forEach(expandElementHeight);
+function expandElementHeight(element) {
+    element.style.height = "auto";
+    element.style.height = element.scrollHeight + "px";
+}
+
+function handleResizeDebounced() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        registeredTextareas.forEach(expandElementHeight);
+    }, 100);
 }
 
 export function cleanUpAutoExpand() {
+    // Remove event listeners for each textarea
     registeredTextareas.forEach(function (textarea) {
         textarea.removeEventListener("input", expandElementHeight);
     });
     registeredTextareas = [];
-    window.removeEventListener("resize", handleResize);
+
+    window.removeEventListener("resize", handleResizeDebounced);
 }
