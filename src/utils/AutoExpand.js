@@ -26,10 +26,10 @@ export function SetUpAutoExpand(className = "ExpandingTextArea") {
 
     textareas.forEach(function (textarea) {
         if (textarea.tagName.toLowerCase() === "textarea") {
+            textarea.style.overflowY = "hidden";
             textarea.addEventListener("input", function () {
                 expandElementHeight(this);
             });
-            textarea.style.overflowY = "hidden";
             expandElementHeight(textarea); 
         }
     });
