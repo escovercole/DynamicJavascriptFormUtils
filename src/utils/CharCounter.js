@@ -1,62 +1,74 @@
-﻿/*
-    Appends a Character remining count below the textArea
+/*
+    Appends a Character Remaining Count below a TextArea.
 
-    ----------------------
-        Initialization
-    ----------------------
-    On page load, call set up with ID assigned to input field
-        SetUpCharCounter("CountedProperty");
+    Usage:
+    Call SetUpCharCounter("TextareaID");
+
+    Notes:
+    - Textarea must include a "data-val-length-max" attribute for max character count.
+    - Counter dynamically updates on user input.
 */
 
-
-//Adds a character remaining field to the text field based on the data-val-length-max property
-//  textareaId: ID of the textarea to be counted
 export function SetUpCharCounter(textareaId) {
-    const textcountId = textareaId + 'Text';
-    const wordcountId = textareaId + 'Words'
-    const textarea = document.querySelector("#" + textareaId);
+    const CLASS_DANGER = "text-danger";
+    const CLASS_HIDDEN = "d-none";
+    const DEFAULT_MAX_LENGTH = 200;
 
-    const counterContainer = document.createElement('div');
-    counterContainer.id = textarea.id + 'CounterContainer'; // Set dynamic ID
-    counterContainer.className = 'd-flex justify-content-end'; // Add any necessary classes
+    const textarea = document.querySelector(`#${textareaId}`);
+    if (!textarea) {
+        console.error(`Textarea with ID: ${textareaId} not found.`);
+        return;
+    }
 
-    // Insert the counter container after the textarea
+    const maxLen = parseInt(textarea.getAttribute("data-val-length-max")) || DEFAULT_MAX_LENGTH;
+    if (isNaN(maxLen)) {
+        console.warn(`Invalid "data-val-length-max" attribute for textarea with ID: ${textareaId}. Defaulting to ${DEFAULT_MAX_LENGTH}.`);
+    }
+
+    const existingCounter = document.querySelector(`#${textareaId}CounterContainer`);
+    if (existingCounter) {
+        console.warn(`Counter already exists for textarea with ID: ${textareaId}`);
+        return;
+    }
+
+    const counterContainer = document.createElement("div");
+    counterContainer.id = `${textareaId}CounterContainer`;
+    counterContainer.className = "d-flex justify-content-end"; // Add custom classes if needed
+
     textarea.parentNode.insertBefore(counterContainer, textarea.nextSibling);
 
-    // Dynamically create counter elements
     const wordCount = document.createElement("span");
-    wordCount.id = wordcountId;
-    wordCount.className = "d-none";
-    wordCount.innerHTML = `Characters Remaining - <span id="${textcountId}"></span>`;
-    counterContainer.appendChild(wordCount);
+    wordCount.id = `${textareaId}Words`;
+    wordCount.className = CLASS_HIDDEN;
 
-    const textcount = document.querySelector("#" + textcountId);
-    // Get max length from data attribute
-    const maxLen = parseInt(textarea.getAttribute("data-val-length-max")) || 200;
+    const textcount = document.createElement("span");
+    textcount.id = `${textareaId}Text`;
+    wordCount.textContent = "Characters Remaining - ";
+    wordCount.appendChild(textcount);
+
+    counterContainer.appendChild(wordCount);
 
     function updateCharCount() {
         const textareaValue = textarea.value.length;
+        const remainingChars = maxLen - textareaValue;
 
-        textcount.innerHTML = maxLen - textareaValue;
+        textcount.textContent = remainingChars;
 
         if (textareaValue > maxLen) {
-            textcount.classList.add("text-danger");
+            textcount.classList.add(CLASS_DANGER);
             textarea.classList.add("textarea_danger");
         } else {
-            textcount.classList.remove("text-danger");
+            textcount.classList.remove(CLASS_DANGER);
             textarea.classList.remove("textarea_danger");
         }
 
         if (textareaValue < 1) {
-            wordCount.classList.add("d-none");
+            wordCount.classList.add(CLASS_HIDDEN);
         } else {
-            wordCount.classList.remove("d-none");
+            wordCount.classList.remove(CLASS_HIDDEN);
         }
     }
 
-    // Call updateCharCount on input event
     textarea.addEventListener("input", updateCharCount);
-
-    // Initial call to update char count
     updateCharCount();
 }
