@@ -1,4 +1,4 @@
-﻿
+
 /*
     Auto expands TextArea input to fit contents
 
@@ -15,24 +15,32 @@ function expandElementHeight(element) {
     element.style.height = element.scrollHeight + "px";
 }
 
+let registeredTextareas = [];
+
 export function SetUpAutoExpand(className) {
     const textareas = document.querySelectorAll('.' + className);
+    registeredTextareas = [...textareas]; // Store references
 
     textareas.forEach(function (textarea) {
         if (textarea.tagName.toLowerCase() === "textarea") {
-            // Attach input event listener for auto-expand
             textarea.addEventListener("input", function () {
                 expandElementHeight(this);
             });
-            // Set initial height based on content
             expandElementHeight(textarea);
         }
     });
 
-    // Adjust height on window resize for each textarea
-    window.addEventListener("resize", function () {
-        textareas.forEach(function (textarea) {
-            expandElementHeight(textarea);
-        });
+    window.addEventListener("resize", handleResize);
+}
+
+function handleResize() {
+    registeredTextareas.forEach(expandElementHeight);
+}
+
+export function cleanUpAutoExpand() {
+    registeredTextareas.forEach(function (textarea) {
+        textarea.removeEventListener("input", expandElementHeight);
     });
-};
+    registeredTextareas = [];
+    window.removeEventListener("resize", handleResize);
+}
