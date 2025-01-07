@@ -2,7 +2,8 @@
     Appends a Character Remaining Count below a TextArea.
 
     Usage:
-    Call SetUpCharCounter("TextareaID");
+    Call SetUpCharCounter("TextareaID") to initialize.
+    Call CleanUpCharCounter("TextareaID") to remove.
 
     Notes:
     - Textarea must include a "data-val-length-max" attribute for max character count.
@@ -33,7 +34,7 @@ export function SetUpCharCounter(textareaId) {
 
     const counterContainer = document.createElement("div");
     counterContainer.id = `${textareaId}CounterContainer`;
-    counterContainer.className = "d-flex justify-content-end"; // Add custom classes if needed
+    counterContainer.className = "d-flex justify-content-end";
 
     textarea.parentNode.insertBefore(counterContainer, textarea.nextSibling);
 
@@ -71,4 +72,21 @@ export function SetUpCharCounter(textareaId) {
 
     textarea.addEventListener("input", updateCharCount);
     updateCharCount();
+}
+
+export function CleanUpCharCounter(textareaId) {
+    const textarea = document.querySelector(`#${textareaId}`);
+    if (!textarea) {
+        console.warn(`Textarea with ID: ${textareaId} not found.`);
+        return;
+    }
+
+    const counterContainer = document.querySelector(`#${textareaId}CounterContainer`);
+    if (counterContainer && counterContainer.parentNode) {
+        counterContainer.parentNode.removeChild(counterContainer);
+    }
+
+    textarea.removeEventListener("input", updateCharCount);
+
+    textarea.classList.remove("textarea_danger");
 }
