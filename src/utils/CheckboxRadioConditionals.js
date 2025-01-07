@@ -1,4 +1,4 @@
-﻿/*
+/*
     Conditionally displays/hides some div depending on checkbox/radio button input
 
     SetUpRadioConditional:
@@ -84,7 +84,7 @@ export function SetUpCheckboxConditional(checkID, showMapping, hideMapping = nul
 // Allow only one checkbox of given className to be selected
 //      className: className of the checkbox(es) that only allow one of given class to be selected
 export function SetUpSingleSelectCheck(className) {
-    const checkboxes = document.querySelectorAll(`.${className}`);
+    const checkboxes = document.querySelectorAll('.' + className);
     function toggleCheck() {
         if (this.checked) {
             checkboxes.forEach(otherCheckbox => {
