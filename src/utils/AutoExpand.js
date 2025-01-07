@@ -1,20 +1,27 @@
 
 /*
-    Auto expands TextArea input to fit contents
+    Auto expands TextArea input to fit contents.
 
-    ----------------------
-        Initialization
-    ----------------------
-    On page load, call set up with class name assigned to input fields
-        SetUpAutoExpand("ExpandingTextArea");
+    Usage:
+    1. Call SetUpAutoExpand("MyTextAreaClassName") to initialize auto-expanding behavior.
+    2. Call CleanUpAutoExpand() to remove event listeners and clean up resources.
+
+    Notes:
+    - Ensure the DOM is fully loaded before calling SetUpAutoExpand.
+    - Default class name is "ExpandingTextArea" if none is provided.
 */
 
 
 let registeredTextareas = [];
 let resizeTimeout;
+const DEBOUNCE_DELAY = 100;
 
-export function SetUpAutoExpand(className) {
+export function SetUpAutoExpand(className = "ExpandingTextArea") {
     const textareas = document.querySelectorAll('.' + className);
+    if (textareas.length === 0) {
+        console.warn(`No textareas found with the class: ${className}`);
+    }
+
     registeredTextareas = [...textareas]; 
 
     textareas.forEach(function (textarea) {
@@ -38,13 +45,14 @@ function handleResizeDebounced() {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
         registeredTextareas.forEach(expandElementHeight);
-    }, 100);
+    }, DEBOUNCE_DELAY);
 }
 
-export function cleanUpAutoExpand() {
-    // Remove event listeners for each textarea
+export function CleanUpAutoExpand() {
     registeredTextareas.forEach(function (textarea) {
-        textarea.removeEventListener("input", expandElementHeight);
+        if (document.body.contains(textarea)) {
+            textarea.removeEventListener("input", expandElementHeight);
+        }
     });
     registeredTextareas = [];
 
