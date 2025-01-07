@@ -4,15 +4,15 @@
 
     Functions:
     - RemoveCommas: Strips commas from input values.
-    - SetUpCommaFormatting: Formats input fields as comma-separated decimal numbers.
-    - SetUpIntegerFormatting: Formats input fields as integers, optionally with commas.
+    - SetUpCommaFormatting: Formats input fields as comma-separated decimal numbers, limiting to a specified number of digits before the decimal.
+    - SetUpIntegerFormatting: Formats input fields as integers, optionally with commas, limiting to a specified number of digits.
 
     ----------------------
         Usage Examples
     ----------------------
-    - SetUpCommaFormatting('CurrencyNumber');
-    - SetUpIntegerFormatting('IntegerNumber');
-    - SetUpIntegerFormatting('SmallerNumber', false);
+    - SetUpCommaFormatting('CurrencyNumber', 9);
+    - SetUpIntegerFormatting('IntegerNumber', true, 9);
+    - SetUpIntegerFormatting('SmallerNumber', false, 5);
 */
 
 /** Remove commas from input values in fields with a specified class.
@@ -41,37 +41,49 @@ function formatWithCommas(num) {
     return formattedDecimal ? `${formattedInteger}.${formattedDecimal}` : formattedInteger;
 }
 
-/** Format input as a comma-separated number.
+/** Format input as a comma-separated number, limiting to specified digits before the decimal.
  *  input - Input field element.
+ *  limit - Maximum number of digits allowed before the decimal.
  */
-function handleCommaFormatting(input) {
+function handleCommaFormatting(input, limit) {
     const value = input.value.trim();
-    input.value = value ? formatWithCommas(value) : '';
+    let sanitizedValue = value.replace(/[^\d.]/g, '');
+
+    const [integer, decimal] = sanitizedValue.split('.');
+    if (integer.length > limit) {
+        sanitizedValue = integer.slice(0, limit) + (decimal ? '.' + decimal : '');
+    }
+
+    input.value = sanitizedValue ? formatWithCommas(sanitizedValue) : '';
 }
 
 /** Set up comma formatting for input fields.
  *  className - Class name of the input fields to format.
+ *  limit - Maximum number of digits allowed before the decimal (default is 9).
  */
-export function SetUpCommaFormatting(className) {
+export function SetUpCommaFormatting(className, limit = 9) {
     document.querySelectorAll(`.${className}`).forEach(input => {
         if (!input.dataset.inputEventListenerAttached) {
-            input.addEventListener('input', () => handleCommaFormatting(input));
+            input.addEventListener('input', () => handleCommaFormatting(input, limit));
             input.dataset.inputEventListenerAttached = 'true';
         }
 
-        handleCommaFormatting(input);
+        handleCommaFormatting(input, limit);
     });
 }
 
-/** Format an integer with optional commas.
+/** Format an integer with optional commas, limiting to specified digits.
  *  input - Input field element.
  *  applyCommas - Whether to format with commas.
+ *  limit - Maximum number of digits allowed (default is 9).
  */
-function handleIntegerFormatting(input, applyCommas) {
+function handleIntegerFormatting(input, applyCommas, limit) {
     const value = input.value.trim();
-    let sanitizedValue = value.replace(/[^\d]/g, ''); // Remove non-digit characters.
+    let sanitizedValue = value.replace(/[^\d]/g, '');
 
-    sanitizedValue = sanitizedValue.slice(0, 9);
+    if (sanitizedValue.length > limit) {
+        sanitizedValue = sanitizedValue.slice(0, limit);
+    }
 
     input.value = applyCommas ? formatWithCommas(sanitizedValue) : sanitizedValue;
 }
@@ -79,14 +91,15 @@ function handleIntegerFormatting(input, applyCommas) {
 /** Set up integer formatting for input fields.
  *  className - Class name of the input fields to format.
  *  applyCommas - Whether to apply commas to the formatted integers.
+ *  limit - Maximum number of digits allowed (default is 9).
  */
-export function SetUpIntegerFormatting(className, applyCommas = true) {
+export function SetUpIntegerFormatting(className, applyCommas = true, limit = 9) {
     document.querySelectorAll(`.${className}`).forEach(input => {
         if (!input.dataset.inputEventListenerAttached) {
-            input.addEventListener('input', () => handleIntegerFormatting(input, applyCommas));
+            input.addEventListener('input', () => handleIntegerFormatting(input, applyCommas, limit));
             input.dataset.inputEventListenerAttached = 'true';
         }
 
-        handleIntegerFormatting(input, applyCommas);
+        handleIntegerFormatting(input, applyCommas, limit);
     });
 }
