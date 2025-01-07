@@ -140,7 +140,7 @@
                         </div>
                         <div class="col">
                             <label for="SumTotal">Sum</label>
-                            <input type="text" class="form-control" id="SumTotal"/>
+                            <input type="text" class="form-control" id="SumTotal" disabled/>
                         </div>
                     </div>
 
@@ -166,6 +166,7 @@
                 DynamicFormUtils.SetUpCheckboxConditional('CheckC', ['CheckCYes'], ['CheckCNo']);
                 DynamicFormUtils.SetUpSingleSelectCheck('SingleCheck');
                 DynamicFormUtils.SetUpPhoneFormatting('PhoneNumber');
+                DynamicFormUtils.SetUpCommaFormatting('SumVal');
                 DynamicFormUtils.SetUpSumValue('SumVal', 'SumTotal');
             });
         </script>
