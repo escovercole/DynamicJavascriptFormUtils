@@ -73,6 +73,12 @@
                                 Check C
                             </label>
                         </div>
+                        <div class="col-auto CheckBYes">
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" id="CheckD"/>
+                                Check D
+                            </label>
+                        </div>
                     </div>
                     <div class="row my-3">
                         <div class="col-auto">
@@ -82,11 +88,9 @@
 
                         <div class="col-auto">
                             <span id="CheckBNo">Check B is not checked</span>
-                            <span id="CheckBYes">Check B is checked</span>
                         </div>
 
                         <div class="col-auto">
-                            <span id="CheckCNo">Check C is not checked</span>
                             <span id="CheckCYes">Check C is checked</span>
                         </div>
                     </div>
@@ -126,21 +130,34 @@
                     </div>
 
                     <div class="row my-3">
+                        <label class="fw-bold">Auto Sum Inputs</label>
                         <div class="col">
                             <label for="Sum1">Number 1</label>
-                            <input type="text" class="form-control SumVal" id="Sum1"/>
+                            <div class="input-group">
+                                <span class="input-group-text"> <i class="fa fa-dollar"></i> </span>
+                                <input type="text" class="form-control SumVal" id="Sum1"/>
+                            </div>
                         </div>
                         <div class="col">
                             <label for="Sum2">Number 2</label>
-                            <input type="text" class="form-control SumVal" id="Sum2"/>
+                            <div class="input-group">
+                                <span class="input-group-text"> <i class="fa fa-dollar"></i> </span>
+                                <input type="text" class="form-control SumVal" id="Sum2"/>
+                            </div>
                         </div>
                         <div class="col">
                             <label for="Sum3">Number 3</label>
-                            <input type="text" class="form-control SumVal" id="Sum3"/>
+                            <div class="input-group">
+                                <span class="input-group-text"> <i class="fa fa-dollar"></i> </span>
+                                <input type="text" class="form-control SumVal" id="Sum3"/>
+                            </div>
                         </div>
                         <div class="col">
                             <label for="SumTotal">Sum</label>
-                            <input type="text" class="form-control" id="SumTotal" disabled/>
+                            <div class="input-group">
+                                <span class="input-group-text"> <i class="fa fa-dollar"></i> </span>
+                                <input type="text" class="form-control" id="SumTotal" disabled/>
+                            </div>
                         </div>
                     </div>
 
@@ -163,7 +180,7 @@
                 DynamicFormUtils.SetUpRadioConditional('YesRadio', 'NoRadio', 'ConditionalDiv');
                 DynamicFormUtils.SetUpCheckboxConditional('CheckA', ['CheckAYes'], ['CheckANo']);
                 DynamicFormUtils.SetUpCheckboxConditional('CheckB', ['CheckBYes'], ['CheckBNo']);
-                DynamicFormUtils.SetUpCheckboxConditional('CheckC', ['CheckCYes'], ['CheckCNo']);
+                DynamicFormUtils.SetUpCheckboxConditional('CheckC', ['CheckCYes']);
                 DynamicFormUtils.SetUpSingleSelectCheck('SingleCheck');
                 DynamicFormUtils.SetUpPhoneFormatting('PhoneNumber');
                 DynamicFormUtils.SetUpCommaFormatting('SumVal');
