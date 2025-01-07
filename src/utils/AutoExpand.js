@@ -22,15 +22,17 @@ export function SetUpAutoExpand(className = "ExpandingTextArea") {
         console.warn(`No textareas found with the class: ${className}`);
     }
 
-    registeredTextareas = [...textareas]; 
-
     textareas.forEach(function (textarea) {
-        if (textarea.tagName.toLowerCase() === "textarea") {
-            textarea.style.overflowY = "hidden";
-            textarea.addEventListener("input", function () {
-                expandElementHeight(this);
-            });
-            expandElementHeight(textarea); 
+        if (!registeredTextareas.includes(textarea)) {
+            registeredTextareas.push(textarea);
+
+            if (textarea.tagName.toLowerCase() === "textarea") {
+                textarea.style.overflowY = "hidden";
+                textarea.addEventListener("input", function () {
+                    expandElementHeight(this);
+                });
+                expandElementHeight(textarea);
+            }
         }
     });
 
